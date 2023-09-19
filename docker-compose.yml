@@ -4,8 +4,10 @@ services:
   web:
     restart: always
     build: ./web
-    expose:
-      - "8005"
+    #expose:
+    #  - "8000"
+    ports:
+      - "8000:8000"
     links:
       - postgres:postgres
       - redis:redis
@@ -17,23 +19,25 @@ services:
       DEBUG: 'true'
     command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
 
-  nginx:
-    restart: always
-    build: ./nginx/
-    ports:
-      - "805:80"
-    volumes:
-      - web-static:/www/static
-    links:
-      - web:web
+  #nginx:
+  #  restart: always
+  #  build: ./nginx/
+  #  ports:
+  #    - "805:80"
+  #  volumes:
+  #    - web-static:/www/static
+  #  links:
+  #    - web:web
 
   postgres:
     restart: always
     image: postgres:latest
     ports:
-      - "5435:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
 
   redis:
     restart: always
